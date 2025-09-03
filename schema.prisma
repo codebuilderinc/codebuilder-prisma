@@ -211,13 +211,16 @@ enum Role {
 //   - One-to-Many: User->hasMany(Trades):  - A User may have zero or more Trades that belong to it . [Optional]
 //   - One-to-Many: User->hasMany(CopyWallet): - A User may have zero or more CopyWallets that belong to it . [Optional]
 model User {
-  id        Int      @id @default(autoincrement()) @map("id")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  email     String   @unique //depracated
-  password  String //depracated
-  firstname String? //depracated
-  lastname  String? //depracated
+  id             Int      @id @default(autoincrement()) @map("id")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  email          String   @unique //depracated
+  password       String //depracated
+  firstname      String? //depracated
+  lastname       String? //depracated
+  username       String? // Google display name (full name)
+  profilePicture String?  @map("profile_picture") // Google profile picture URL
+  googleId       String?  @unique @map("google_id") // Google's unique identifier
 
   role      Role     @default(USER) @map("role")
   wallet    String?  @unique @db.VarChar(42)
@@ -225,6 +228,7 @@ model User {
   // @@schema("public")
 
   @@index([wallet, is_active], map: "active_user")
+  @@index([googleId], map: "google_user")
   @@map("users")
 }
 
