@@ -266,7 +266,7 @@ model Location {
 
   // Relations
   subscriptionId Int
-  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
 
   @@index([subscriptionId]) // To quickly find all locations for a subscription.
   @@index([timestamp]) // To filter or sort by time.
