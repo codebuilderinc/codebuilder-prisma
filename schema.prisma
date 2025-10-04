@@ -55,10 +55,15 @@ model Job {
   createdAt   DateTime  @default(now()) @map("created_at") // Record creation timestamp
   updatedAt   DateTime  @updatedAt @map("updated_at") // Auto-updated timestamp
 
+  // Moved from JobSource
+  source     String? @map("source")
+  externalId String? @map("external_id")
+  data       Json?   @map("data")
+
   tags     JobTag[] // Many-to-many relation to Tag via JobTag
   metadata JobMetadata[] // Arbitrary extra fields (key/value) for this job
-  sources  JobSource[] // Provenance/source records for this job (can have multiple)
 
+  @@index([source, externalId], name: "jobs_source_external_id_idx")
   @@map("jobs")
 }
 
@@ -110,23 +115,6 @@ model JobMetadata {
 
   @@unique([jobId, name])
   @@map("job_metadata")
-}
-
-/// Tracks the source(s) from which this job was imported.
-/// Used for provenance, deduplication, and full source data storage.
-model JobSource {
-  id         Int      @id @default(autoincrement()) @map("id")
-  jobId      Int      @map("job_id") // FK to Job
-  source     String   @map("source") // E.g. "reddit", "web3career"
-  externalId String?  @map("external_id") // ID from source system (for deduplication)
-  rawUrl     String?  @map("raw_url") // Original URL on source site
-  data       Json?    @map("data") // Raw, full source data
-  createdAt  DateTime @default(now()) @map("created_at") // Record creation timestamp
-
-  job Job @relation(fields: [jobId], references: [id])
-
-  @@unique([source, externalId])
-  @@map("job_sources")
 }
 
 /// Enables polymorphic tagging (linking tags to any model, not just jobs).
