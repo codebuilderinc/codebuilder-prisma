@@ -18,7 +18,6 @@ generator client {
 
 generator dbml {
   provider = "prisma-dbml-generator"
-  output   = "./dbml/schema.dbml"
 }
 
 generator nestjsDto {

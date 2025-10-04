@@ -15,9 +15,11 @@ Table jobs {
   isRemote Boolean
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+  source String
+  externalId String
+  data Json
   tags job_tags [not null]
   metadata job_metadata [not null]
-  sources job_sources [not null]
 
   Note: 'Stores job listings from all sources (Reddit, Web3Career, etc).
 Contains only the main, normalized/shared job fields.'
@@ -74,24 +76,6 @@ Table job_metadata {
 Allows storage of extra source-specific or custom fields.'
 }
 
-Table job_sources {
-  id Int [pk, increment]
-  jobId Int [not null]
-  source String [not null]
-  externalId String
-  rawUrl String
-  data Json
-  createdAt DateTime [default: `now()`, not null]
-  job jobs [not null]
-
-  indexes {
-    (source, externalId) [unique]
-  }
-
-  Note: 'Tracks the source(s) from which this job was imported.
-Used for provenance, deduplication, and full source data storage.'
-}
-
 Table taggables {
   id Int [pk, increment]
   tagId Int [not null]
@@ -145,6 +129,9 @@ Table users {
   password String [not null]
   firstname String
   lastname String
+  username String
+  profilePicture String
+  googleId String [unique]
   role Role [not null, default: 'USER']
   wallet String [unique]
   is_active Boolean [default: true]
@@ -233,8 +220,6 @@ Ref: job_tags.tagId > tags.id
 
 Ref: job_metadata.jobId > jobs.id
 
-Ref: job_sources.jobId > jobs.id
-
 Ref: taggables.tagId > tags.id
 
-Ref: locations.subscriptionId > subscriptions.id
+Ref: locations.subscriptionId > subscriptions.id [delete: Cascade]
