@@ -5,10 +5,10 @@
 // =============================================================================
 
 datasource db {
-  provider          = "postgresql"
-  url               = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
-  //schemas           = ["bsc", "public"]
+  provider = "postgresql"
+  // Connection URLs were moved to prisma.config.ts per Prisma v7+:
+  // - Migrate connection URL and shadow DB URL should be configured in prisma.config.ts
+  //schemas = ["bsc", "public"]
 }
 
 generator client {
