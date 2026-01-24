@@ -6,14 +6,24 @@
 
 datasource db {
   provider = "postgresql"
+
   // Connection URLs were moved to prisma.config.ts per Prisma v7+:
+  //url               = env("DATABASE_URL")
+  //shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+
   // - Migrate connection URL and shadow DB URL should be configured in prisma.config.ts
   //schemas = ["bsc", "public"]
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  engineType = "client"
+  output   = "../src/generated/prisma"
+
+  //DEPRACATED IN PRISMA V7+
+  //provider = "prisma-client-js"
   // previewFeatures = ["multiSchema"]
+
 }
 
 generator dbml {
@@ -23,15 +33,26 @@ generator dbml {
 generator nestjsDto {
   provider                        = "prisma-generator-nestjs-dto"
   output                          = "../src/generated/nestjs-dto"
+  prismaClientImportPath          = ""
   outputToNestJsResourceStructure = "false"
+  flatResourceStructure           = "false"
   exportRelationModifierClasses   = "true"
   reExport                        = "false"
+  generateFileTypes               = "all"
   createDtoPrefix                 = "Create"
   updateDtoPrefix                 = "Update"
   dtoSuffix                       = "Dto"
   entityPrefix                    = ""
   entitySuffix                    = ""
+  classValidation                 = "false"
   fileNamingStyle                 = "camel"
+  noDependencies                  = "true"
+  outputType                      = "class"
+  definiteAssignmentAssertion     = "false"
+  requiredResponseApiProperty     = "false"
+  prettier                        = "true"
+  wrapRelationsAsType             = "false"
+  showDefaultValues               = "false"
 }
 
 // =============================================================================
