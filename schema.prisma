@@ -162,6 +162,67 @@ enum SubscriptionType {
   fcm // Firebase Cloud Messaging (native apps)
 }
 
+enum PaymentProvider {
+  STRIPE
+  PAYPAL
+  BITCOIN
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  PAYPAL
+  BITCOIN
+}
+
+enum PaymentStatus {
+  INITIATED
+  PROCESSING
+  REQUIRES_ACTION
+  SUCCEEDED
+  FAILED
+  CANCELED
+}
+
+enum PaymentSelection {
+  FULL
+  PARTIAL
+}
+
+model PaymentAttempt {
+  id                    String           @id @default(cuid()) @map("id")
+  invoiceIdentifier     String           @map("invoice_identifier")
+  provider              PaymentProvider  @map("provider")
+  method                PaymentMethod    @map("method")
+  selection             PaymentSelection @map("selection")
+  status                PaymentStatus    @default(INITIATED) @map("status")
+  currency              String           @default("USD") @db.VarChar(3) @map("currency")
+  amountCents           Int              @map("amount_cents")
+  invoiceTotalCents     Int              @map("invoice_total_cents")
+  invoiceBalanceCents   Int              @map("invoice_balance_cents")
+  clientName            String?          @map("client_name")
+  clientFirm            String?          @map("client_firm")
+  clientAddress         String?          @map("client_address")
+  stripePaymentIntentId String?          @unique @map("stripe_payment_intent_id")
+  stripePaymentMethodId String?          @map("stripe_payment_method_id")
+  stripeChargeId        String?          @map("stripe_charge_id")
+  receiptUrl            String?          @map("receipt_url")
+  cardBrand             String?          @map("card_brand")
+  cardLast4             String?          @map("card_last4")
+  billingPostalCode     String?          @db.VarChar(32) @map("billing_postal_code")
+  failureCode           String?          @map("failure_code")
+  failureMessage        String?          @map("failure_message")
+  requestPayload        Json?            @map("request_payload")
+  invoiceSnapshot       Json?            @map("invoice_snapshot")
+  providerResponse      Json?            @map("provider_response")
+  finalizedAt           DateTime?        @map("finalized_at")
+  createdAt             DateTime         @default(now()) @map("created_at")
+  updatedAt             DateTime         @updatedAt @map("updated_at")
+
+  @@index([invoiceIdentifier, provider, status], name: "payment_attempts_invoice_provider_status_idx")
+  @@index([createdAt], name: "payment_attempts_created_at_idx")
+  @@map("payment_attempts")
+}
+
 /// Stores user subscriptions for push notifications.
 model Subscription {
   // Fields
