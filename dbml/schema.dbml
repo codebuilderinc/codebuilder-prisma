@@ -105,6 +105,37 @@ Table reddit_posts {
   Note: 'Stores posts scraped from Reddit.'
 }
 
+Table payment_attempts {
+  id String [pk]
+  invoiceIdentifier String [not null]
+  provider PaymentProvider [not null]
+  method PaymentMethod [not null]
+  selection PaymentSelection [not null]
+  status PaymentStatus [not null, default: 'INITIATED']
+  currency String [not null, default: 'USD']
+  amountCents Int [not null]
+  invoiceTotalCents Int [not null]
+  invoiceBalanceCents Int [not null]
+  clientName String
+  clientFirm String
+  clientAddress String
+  stripePaymentIntentId String [unique]
+  stripePaymentMethodId String
+  stripeChargeId String
+  receiptUrl String
+  cardBrand String
+  cardLast4 String
+  billingPostalCode String
+  failureCode String
+  failureMessage String
+  requestPayload Json
+  invoiceSnapshot Json
+  providerResponse Json
+  finalizedAt DateTime
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
 Table subscriptions {
   id Int [pk, increment]
   ipAddress String [not null]
@@ -205,6 +236,32 @@ Table error_reports {
 Enum SubscriptionType {
   web
   fcm
+}
+
+Enum PaymentProvider {
+  STRIPE
+  PAYPAL
+  BITCOIN
+}
+
+Enum PaymentMethod {
+  CREDIT_CARD
+  PAYPAL
+  BITCOIN
+}
+
+Enum PaymentStatus {
+  INITIATED
+  PROCESSING
+  REQUIRES_ACTION
+  SUCCEEDED
+  FAILED
+  CANCELED
+}
+
+Enum PaymentSelection {
+  FULL
+  PARTIAL
 }
 
 Enum Role {
